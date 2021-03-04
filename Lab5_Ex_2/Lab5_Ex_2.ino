@@ -57,10 +57,7 @@ const int ciEncoderLeftB = 5;
 const int ciEncoderRightA = 14;
 const int ciEncoderRightB = 13;
 const int ciSmartLED = 25;
-/*
-const int ciStepperMotorDir = 22;
-const int ciStepperMotorStep = 21;
-*/
+
 volatile uint32_t vui32test1;
 volatile uint32_t vui32test2;
 
@@ -70,14 +67,14 @@ volatile uint32_t vui32test2;
 
 #include <Adafruit_NeoPixel.h>
 #include <Math.h>
-#include "Motion.h";
+#include "Motion.h"
 #include "MyWEBserver.h"
 #include "BreakPoint.h"
-#include "WDT.h";
+#include "WDT.h"
 
 void loopWEBServerButtonresponce(void);
 
-const int CR1_ciMainTimer = 1000;
+const int CR1_ciMainTimer =  1000;
 const int CR1_ciHeartbeatInterval = 500;
 int CR1_ciMotorRunTime = 600; //not const anymore so I can play around with it.
 const long CR1_clDebounceDelay = 50;
@@ -170,7 +167,7 @@ void setup() {
    pinMode(ciPB1, INPUT_PULLUP);
    pinMode(ciLimitSwitch, INPUT_PULLUP);
 
-   pinMode(dirPin, OUTPUT);
+      pinMode(dirPin, OUTPUT);
    pinMode(stepPin, OUTPUT);
 
    SmartLEDs.begin();                          // Initialize Smart LEDs object (required)
@@ -262,8 +259,8 @@ void loop()
           }
           case 1:
           {
-            CR1_ciMotorRunTime = 2000; //set the time allocated for each case to 2 sec
-            ENC_SetDistance(240, 240); //go forward a bit
+            CR1_ciMotorRunTime = 1300; //set the time allocated for each case to 2 sec
+            ENC_SetDistance(110, 110); //go forward a bit
             ucMotorState = 1; //forward
             CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
             CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
@@ -273,7 +270,7 @@ void loop()
           
           case 2:
           {
-            ENC_SetDistance(25, -25); //go left a bit
+            ENC_SetDistance(42, -42); //go left a bit
             ucMotorState = 2; //left
             CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
             CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
@@ -283,7 +280,7 @@ void loop()
           
           case 3:
           {
-            ENC_SetDistance(233, 233); //go forward a bit
+            ENC_SetDistance(140, 140); //go forward a bit
             ucMotorState = 1; //forward
             CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
             CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
@@ -293,7 +290,7 @@ void loop()
 
           case 4:
           {
-            ENC_SetDistance(-38, 38); //go right a bit
+            ENC_SetDistance(-22, 22); //go right a bit
             ucMotorState = 3; //right
             CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
             CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
@@ -303,17 +300,17 @@ void loop()
          
           case 5:
           {
-            ENC_SetDistance(455, 455); //go forward a bit
+            ENC_SetDistance(160, 160); //go forward a bit
             ucMotorState = 1; //forward
-            CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed+6;
-            CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
+            CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed + 8;
+            CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed - 8;
             ucMotorStateIndex = 6;
             break;
           }
           
           case 6:
           {
-            ENC_SetDistance(-50, 50); //go right a bit
+            ENC_SetDistance(-22, 22); //go right a bit
             ucMotorState = 3; //right
             CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
             CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
@@ -323,7 +320,7 @@ void loop()
           
           case 7:
           {
-            ENC_SetDistance(560, 560); //go forward a bit
+            ENC_SetDistance(140, 140); //go forward a bit
             ucMotorState = 1; //forward
             CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
             CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
@@ -333,7 +330,7 @@ void loop()
           
            case 8:
           {
-            CR1_ciMotorRunTime = 600; //set the time allocated for each case to 300 mili sec
+            CR1_ciMotorRunTime = 400; //set the time allocated for each case to 300 mili sec
             if(CR1_ui8IRDatum == 0x55){
               ENC_SetDistance(95, 95); //135 for 1 foot, 3 feet to a meter, x 2 meters + a bit for caution
               //^^^ doesn't actually matter if the correction step is called
@@ -353,23 +350,23 @@ void loop()
             case 9:
           {
             CR1_ciMotorRunTime = 2000; //set the time allocated for each case to 2 sec
-            ENC_SetDistance(152, 152); //go back half the distance: 1 meter
+            ENC_SetDistance(405, 405); //go back half the distance: 1 meter
             ucMotorState = 4; //reverse
             CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
-            CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
+            CR1_ui8RightWheelSpeed = (CR1_ui8WheelSpeed+25);
             ucMotorStateIndex = 10;
             break;    
           }
             case 10:
           {
-            ENC_SetDistance(96, -96); //turn 180 degrees, 90 degrees was 30 ticks
+            ENC_SetDistance(71, -71); //turn 180 degrees, 90 degrees was 30 ticks
             ucMotorState = 2; //left
             CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
             CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
             ucMotorStateIndex = 11;
             break; 
           }
-            case 11:
+             case 11:
             {
               
               ledcWrite(2,255);
@@ -399,7 +396,7 @@ void loop()
              ledcWrite(10, 0);  // set the desired                              
              break;
             }
-
+         }
         }
       }
       CR1_ucMainTimerCaseCore1 = 1;
@@ -433,7 +430,7 @@ void loop()
       if(ENC_ISMotorRunning())
       {
         //RightAdjust(CR1_ui8RightWheelSpeed, CR1_ui8Adjuster)
-        MoveTo(ucMotorState, LeftAdjust(CR1_ui8LeftWheelSpeed - 25, CR1_ui8Adjuster), RightAdjust(CR1_ui8RightWheelSpeed, CR1_ui8Adjuster)+10);
+        MoveTo(ucMotorState, LeftAdjust(CR1_ui8LeftWheelSpeed, CR1_ui8Adjuster)-6, RightAdjust(CR1_ui8RightWheelSpeed, CR1_ui8Adjuster)+5);
       }
    
       CR1_ucMainTimerCaseCore1 = 4;
@@ -442,7 +439,7 @@ void loop()
     //###############################################################################
     case 4:   
     {
-     
+    
       CR1_ucMainTimerCaseCore1 = 5;
       break;
     }
@@ -450,12 +447,15 @@ void loop()
     case 5: 
     {
       
+     
       CR1_ucMainTimerCaseCore1 = 6;
       break;
     }
     //###############################################################################
     case 6:
-    {    
+    {
+  
+    
       CR1_ucMainTimerCaseCore1 = 7;
       break;
     }
@@ -507,9 +507,8 @@ void loop()
     digitalWrite(ciHeartbeatLED, btHeartbeat);
    // Serial.println((vui32test2 - vui32test1)* 3 );
  }
- }
- 
- if(raiseFlag == true){
+
+if(raiseFlag == true){
       digitalWrite(dirPin, directionHold);
       currMicrosec = micros();                      // get the current time in milliseconds
         
@@ -531,5 +530,4 @@ void loop()
           }  
       }
 
- 
 }

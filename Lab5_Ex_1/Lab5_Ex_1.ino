@@ -57,10 +57,7 @@ const int ciEncoderLeftB = 5;
 const int ciEncoderRightA = 14;
 const int ciEncoderRightB = 13;
 const int ciSmartLED = 25;
-/*
-const int ciStepperMotorDir = 22;
-const int ciStepperMotorStep = 21;
-*/
+
 volatile uint32_t vui32test1;
 volatile uint32_t vui32test2;
 
@@ -77,9 +74,9 @@ volatile uint32_t vui32test2;
 
 void loopWEBServerButtonresponce(void);
 
-const int CR1_ciMainTimer = 1000;
+const int CR1_ciMainTimer =  1000;
 const int CR1_ciHeartbeatInterval = 500;
-int CR1_ciMotorRunTime = 600; //not const anymore so I can play around with it.
+int CR1_ciMotorRunTime = 300; //not const anymore so I can play around with it.
 const long CR1_clDebounceDelay = 50;
 const long CR1_clReadTimeout = 220;
 
@@ -129,8 +126,6 @@ unsigned long stepRate = 0;                       // step rate in microseconds
 const int dirPin = 21; // SDA 
 const int stepPin = 22; //SCLK
 boolean directionHold = true;
-boolean raiseFlag = false;
-boolean lowerFlag = false;
 
 // Declare our SK6812 SMART LED object:
 Adafruit_NeoPixel SmartLEDs(2, 25, NEO_GRB + NEO_KHZ400);
@@ -173,6 +168,9 @@ void setup() {
    pinMode(dirPin, OUTPUT);
    pinMode(stepPin, OUTPUT);
 
+   ledcAttachPin(stepPin, 10);     // Assign servo pin to servo channel
+   ledcSetup(10, 589, 8);           // setup for channel for 589 Hz, 8-bit resolution
+   
    SmartLEDs.begin();                          // Initialize Smart LEDs object (required)
    SmartLEDs.clear();                          // Set all pixel colours to off
    SmartLEDs.show();                           // Send the updated pixel colours to the hardware
@@ -260,82 +258,10 @@ void loop()
             move(0);
             break;
           }
-          case 1:
+           case 1:
           {
-            CR1_ciMotorRunTime = 2000; //set the time allocated for each case to 2 sec
-            ENC_SetDistance(240, 240); //go forward a bit
-            ucMotorState = 1; //forward
-            CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
-            CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
-            ucMotorStateIndex = 2;
-            break;
-          }
-          
-          case 2:
-          {
-            ENC_SetDistance(25, -25); //go left a bit
-            ucMotorState = 2; //left
-            CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
-            CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
-            ucMotorStateIndex = 3;
-            break;
-          }
-          
-          case 3:
-          {
-            ENC_SetDistance(233, 233); //go forward a bit
-            ucMotorState = 1; //forward
-            CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
-            CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
-            ucMotorStateIndex = 4;
-            break;
-          }
-
-          case 4:
-          {
-            ENC_SetDistance(-38, 38); //go right a bit
-            ucMotorState = 3; //right
-            CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
-            CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
-            ucMotorStateIndex = 5;
-            break;
-          }
-         
-          case 5:
-          {
-            ENC_SetDistance(455, 455); //go forward a bit
-            ucMotorState = 1; //forward
-            CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed+6;
-            CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
-            ucMotorStateIndex = 6;
-            break;
-          }
-          
-          case 6:
-          {
-            ENC_SetDistance(-50, 50); //go right a bit
-            ucMotorState = 3; //right
-            CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
-            CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
-            ucMotorStateIndex = 7;
-            break;
-          }
-          
-          case 7:
-          {
-            ENC_SetDistance(560, 560); //go forward a bit
-            ucMotorState = 1; //forward
-            CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
-            CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
-            ucMotorStateIndex = 8;
-            break;
-          }
-          
-           case 8:
-          {
-            CR1_ciMotorRunTime = 600; //set the time allocated for each case to 300 mili sec
             if(CR1_ui8IRDatum == 0x55){
-              ENC_SetDistance(95, 95); //135 for 1 foot, 3 feet to a meter, x 2 meters + a bit for caution
+              ENC_SetDistance(110, 110); //135 for 1 foot, 3 feet to a meter, x 2 meters + a bit for caution
               //^^^ doesn't actually matter if the correction step is called
               //shortened straight time for 700ms runs
               ucMotorState = 1;   //forward
@@ -350,26 +276,26 @@ void loop()
             }
             break;
           }
-            case 9:
+            case 2:
           {
             CR1_ciMotorRunTime = 2000; //set the time allocated for each case to 2 sec
-            ENC_SetDistance(152, 152); //go back half the distance: 1 meter
+            ENC_SetDistance(405, 405); //go back half the distance: 1 meter
             ucMotorState = 4; //reverse
             CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
             CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
-            ucMotorStateIndex = 10;
+            ucMotorStateIndex = 3;
             break;    
           }
-            case 10:
+            case 3:
           {
-            ENC_SetDistance(96, -96); //turn 180 degrees, 90 degrees was 30 ticks
+            ENC_SetDistance(71, -71); //turn 180 degrees, 90 degrees was 30 ticks
             ucMotorState = 2; //left
             CR1_ui8LeftWheelSpeed = CR1_ui8WheelSpeed;
             CR1_ui8RightWheelSpeed = CR1_ui8WheelSpeed;
-            ucMotorStateIndex = 11;
+            ucMotorStateIndex = 4;
             break; 
           }
-            case 11:
+            case 4:
             {
               
               ledcWrite(2,255);
@@ -381,25 +307,25 @@ void loop()
              digitalWrite(dirPin, 1);
              ledcWrite(10, 128);  // set the desired 
              
-             ucMotorStateIndex = 12;
+             ucMotorStateIndex = 5;
              break;
             }
 
-            case 12:
+            case 5:
             {
              digitalWrite(dirPin, 0);
              ledcWrite(10, 128);  // set the desired                              
-              ucMotorStateIndex = 13;
+              ucMotorStateIndex = 6;
              break;
             
             }      
-            case 13:
+            case 6:
             {
              digitalWrite(dirPin, 0);
              ledcWrite(10, 0);  // set the desired                              
              break;
-            }
-
+            }      
+         }
         }
       }
       CR1_ucMainTimerCaseCore1 = 1;
@@ -433,16 +359,15 @@ void loop()
       if(ENC_ISMotorRunning())
       {
         //RightAdjust(CR1_ui8RightWheelSpeed, CR1_ui8Adjuster)
-        MoveTo(ucMotorState, LeftAdjust(CR1_ui8LeftWheelSpeed - 25, CR1_ui8Adjuster), RightAdjust(CR1_ui8RightWheelSpeed, CR1_ui8Adjuster)+10);
+        MoveTo(ucMotorState, LeftAdjust(CR1_ui8LeftWheelSpeed, CR1_ui8Adjuster), RightAdjust(CR1_ui8RightWheelSpeed, CR1_ui8Adjuster) + 16);
       }
-   
-      CR1_ucMainTimerCaseCore1 = 4;
+        CR1_ucMainTimerCaseCore1 = 4;
       break;
     }
     //###############################################################################
     case 4:   
     {
-     
+    
       CR1_ucMainTimerCaseCore1 = 5;
       break;
     }
@@ -450,12 +375,15 @@ void loop()
     case 5: 
     {
       
+     
       CR1_ucMainTimerCaseCore1 = 6;
       break;
     }
     //###############################################################################
     case 6:
-    {    
+    {
+  
+    
       CR1_ucMainTimerCaseCore1 = 7;
       break;
     }
@@ -468,7 +396,7 @@ void loop()
        else if (CR1_ui8IRDatum == 0x41) {           // if "hit" character is seen
          SmartLEDs.setPixelColor(0,25,0,25);        // make LED1 purple with 10% intensity
          if(reverseSet == 0){
-          ucMotorStateIndex = 9; //start to back up and such
+          ucMotorStateIndex = 2; //start to back up and such
           reverseSet = 1;
          }
        }
@@ -507,29 +435,4 @@ void loop()
     digitalWrite(ciHeartbeatLED, btHeartbeat);
    // Serial.println((vui32test2 - vui32test1)* 3 );
  }
- }
- 
- if(raiseFlag == true){
-      digitalWrite(dirPin, directionHold);
-      currMicrosec = micros();                      // get the current time in milliseconds
-        
-          if (currMicrosec - prevMicrosec > 300) { // check to see if elapsed time matched the desired delay
-          prevMicrosec = currMicrosec;           
-          stepCount++;
-          digitalWrite(stepPin, stepCount & 1);  // toggle step pin (0 if stepCount is even, 1 if stepCount is odd)
-          }     
-        
- }
- if(lowerFlag == true){
-      digitalWrite(dirPin, !(directionHold)); 
-      currMicrosec = micros();                      // get the current time in milliseconds
-        
-          if (currMicrosec - prevMicrosec > 300) { // check to see if elapsed time matched the desired delay
-          prevMicrosec = currMicrosec;           
-          stepCount++;
-          digitalWrite(stepPin, stepCount & 1);  // toggle step pin (0 if stepCount is even, 1 if stepCount is odd)
-          }  
-      }
-
- 
 }
