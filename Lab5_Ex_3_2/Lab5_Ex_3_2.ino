@@ -173,6 +173,9 @@ void setup() {
    pinMode(dirPin, OUTPUT);
    pinMode(stepPin, OUTPUT);
 
+    ledcAttachPin(stepPin, 10);     // Assign servo pin to servo channel
+   ledcSetup(10, 589, 8);           // setup for channel for 589 Hz, 8-bit resolution
+
    SmartLEDs.begin();                          // Initialize Smart LEDs object (required)
    SmartLEDs.clear();                          // Set all pixel colours to off
    SmartLEDs.show();                           // Send the updated pixel colours to the hardware
